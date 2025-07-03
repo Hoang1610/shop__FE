@@ -20,9 +20,18 @@ const updateToken = async () => {
   else return null;
 };
 // Add a response interceptor
-instance.defaults.headers.common[
-  "Authorization"
-] = `Bearer ${localStorage.getItem("access_token")}`;
+instance.interceptors.request.use(
+  (config) => {
+    const accessToken = localStorage.getItem("access_token");
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 instance.interceptors.response.use(
   function (response) {
     // Any status code that lie within the range of 2xx cause this function to trigger
@@ -38,16 +47,15 @@ instance.interceptors.response.use(
       +error.response.status === 401 &&
       !error.config.headers["NO_RETRY_HEADER"]
     ) {
-      // error.config.headers["NO_RETRY_HEADER"] = true;
-      // const access_token = await updateToken();
-      // if (access_token) {
-      //   localStorage.setItem("access_token", access_token);
-      //   error.config.headers["Authorization"] = `Bearer ${localStorage.getItem(
-      //     "access_token"
-      //   )}`;
-      //   return instance.request(error.config);
-      // }
-      // console.log("hi");
+      error.config.headers["NO_RETRY_HEADER"] = true;
+      const access_token = await updateToken();
+      if (access_token) {
+        localStorage.setItem("access_token", access_token);
+        error.config.headers["Authorization"] = `Bearer ${localStorage.getItem(
+          "access_token"
+        )}`;
+        return instance.request(error.config);
+      }
     }
     if (
       error.config &&
