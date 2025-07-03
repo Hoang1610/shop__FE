@@ -22,8 +22,10 @@ export default function ProtectedRoute(props) {
   const dispatch = useAppDispatch();
   const getAccount = async () => {
     const res = await fetchAccount();
+    console.log(res);
     if (res.data && res.data.user) {
       dispatch(doLogin(res.data.user));
+      console.log(res);
     } else {
       navigate("/login");
     }

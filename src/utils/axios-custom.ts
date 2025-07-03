@@ -38,15 +38,16 @@ instance.interceptors.response.use(
       +error.response.status === 401 &&
       !error.config.headers["NO_RETRY_HEADER"]
     ) {
-      error.config.headers["NO_RETRY_HEADER"] = true;
-      const access_token = await updateToken();
-      if (access_token) {
-        localStorage.setItem("access_token", access_token);
-        error.config.headers["Authorization"] = `Bearer ${localStorage.getItem(
-          "access_token"
-        )}`;
-        return instance.request(error.config);
-      }
+      // error.config.headers["NO_RETRY_HEADER"] = true;
+      // const access_token = await updateToken();
+      // if (access_token) {
+      //   localStorage.setItem("access_token", access_token);
+      //   error.config.headers["Authorization"] = `Bearer ${localStorage.getItem(
+      //     "access_token"
+      //   )}`;
+      //   return instance.request(error.config);
+      // }
+      // console.log("hi");
     }
     if (
       error.config &&
